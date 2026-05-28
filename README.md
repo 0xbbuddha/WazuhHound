@@ -11,8 +11,6 @@ MATCH p = allShortestPaths((start)-[:WZ_HasRole|WZ_HasPolicy|WZ_CanManageSecurit
 RETURN p
 ```
 
-Inspired by [TailscaleHound](https://github.com/KingOfTheNOPs/TailscaleHound).
-
 ---
 
 ## Features
