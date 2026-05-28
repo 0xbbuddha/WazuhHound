@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Network - Full Infrastructure",
+  "query": "MATCH p=()-[:WZ_MemberOf|WZ_ConnectedTo|WZ_PartOf|WZ_ManagedBy]->() RETURN p"
+}

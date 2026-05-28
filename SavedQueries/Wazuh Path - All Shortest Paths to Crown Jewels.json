@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Path - All Shortest Paths to Crown Jewels",
+  "query": "MATCH (start), (end) WHERE (start:WZ_User OR start:WZ_IndexerUser) AND (end:WZ_Cluster OR end:WZ_IndexerCluster) AND start <> end MATCH p = allShortestPaths((start)-[:WZ_HasRole|WZ_HasPolicy|WZ_CanManageSecurity|WZ_CanControlAgent|WZ_CanImpersonate|WZ_CanInjectEvents|WZ_CanExecuteAR|WZ_MappedToRole|WZ_AccessesIndexer|WZ_CanReadIndex|WZ_CanWriteIndex*1..10]->(end)) RETURN p"
+}

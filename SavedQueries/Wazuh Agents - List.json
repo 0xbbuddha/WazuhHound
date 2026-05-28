@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Agents - List",
+  "query": "MATCH (n:WZ_Agent) RETURN n ORDER BY n.name"
+}

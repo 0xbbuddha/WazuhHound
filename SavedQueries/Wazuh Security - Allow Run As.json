@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Security - Allow Run As",
+  "query": "MATCH (u:WZ_User) WHERE u.allow_run_as = true RETURN u ORDER BY u.name"
+}

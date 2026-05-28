@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Security - Users and Roles",
+  "query": "MATCH p=(u:WZ_User)-[:WZ_HasRole]->(r:WZ_Role) RETURN p ORDER BY u.name"
+}

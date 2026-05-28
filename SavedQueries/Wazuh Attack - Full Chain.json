@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Attack - Full Chain (User to Impact)",
+  "query": "MATCH p=(u:WZ_User)-[:WZ_HasRole]->(:WZ_Role)-[:WZ_HasPolicy]->(:WZ_Policy)-[:WZ_CanControlAgent|WZ_CanManageSecurity|WZ_CanInjectEvents|WZ_CanExecuteAR]->() RETURN p ORDER BY u.name"
+}

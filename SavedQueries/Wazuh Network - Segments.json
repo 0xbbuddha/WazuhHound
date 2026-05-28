@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Network - Segments",
+  "query": "MATCH p=(a:WZ_Agent)-[:WZ_InSegment]->(s:WZ_NetworkSegment) RETURN p ORDER BY s.name"
+}

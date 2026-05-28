@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Attack - Write Config (Manager RCE)",
+  "query": "MATCH p=()-[:WZ_CanWriteConfig]->(:WZ_Cluster) RETURN p"
+}

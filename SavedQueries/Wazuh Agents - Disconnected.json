@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Agents - Disconnected",
+  "query": "MATCH (n:WZ_Agent) WHERE n.status = 'disconnected' RETURN n ORDER BY n.name"
+}

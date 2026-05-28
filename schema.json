@@ -1,0 +1,222 @@
+{
+  "schema": {
+    "name": "WazuhHound",
+    "display_name": "WazuhHound",
+    "version": "v0.7.0",
+    "namespace": "WZ"
+  },
+  "node_kinds": [
+    {
+      "name": "WZ_Agent",
+      "display_name": "Wazuh Agent",
+      "description": "A monitored endpoint registered in Wazuh.",
+      "is_display_kind": true,
+      "icon": "laptop",
+      "color": "#3B82F6"
+    },
+    {
+      "name": "WZ_AgentGroup",
+      "display_name": "Agent Group",
+      "description": "A Wazuh agent group used to share configuration and rules.",
+      "is_display_kind": true,
+      "icon": "users",
+      "color": "#F97316"
+    },
+{
+      "name": "WZ_ClusterNode",
+      "display_name": "Cluster Node",
+      "description": "A Wazuh manager node (master, worker, or standalone).",
+      "is_display_kind": true,
+      "icon": "server",
+      "color": "#8B5CF6"
+    },
+    {
+      "name": "WZ_Cluster",
+      "display_name": "Wazuh Cluster",
+      "description": "A Wazuh manager cluster (or standalone manager).",
+      "is_display_kind": true,
+      "icon": "network-wired",
+      "color": "#1D4ED8"
+    },
+    {
+      "name": "WZ_IndexerNode",
+      "display_name": "Indexer Node",
+      "description": "A Wazuh Indexer node (OpenSearch).",
+      "is_display_kind": true,
+      "icon": "database",
+      "color": "#0EA5E9"
+    },
+    {
+      "name": "WZ_IndexerCluster",
+      "display_name": "Indexer Cluster",
+      "description": "A Wazuh Indexer cluster grouping indexer nodes.",
+      "is_display_kind": true,
+      "icon": "circle-nodes",
+      "color": "#0369A1"
+    },
+    {
+      "name": "WZ_User",
+      "display_name": "Wazuh User",
+      "description": "A Wazuh API security user.",
+      "is_display_kind": true,
+      "icon": "user",
+      "color": "#7C3AED"
+    },
+    {
+      "name": "WZ_Role",
+      "display_name": "Wazuh Role",
+      "description": "A Wazuh RBAC role grouping policies.",
+      "is_display_kind": true,
+      "icon": "id-badge",
+      "color": "#D97706"
+    },
+    {
+      "name": "WZ_Policy",
+      "display_name": "Wazuh Policy",
+      "description": "A Wazuh RBAC policy defining allowed/denied actions on resources.",
+      "is_display_kind": true,
+      "icon": "scroll",
+      "color": "#0D9488"
+    },
+    {
+      "name": "WZ_IndexerUser",
+      "display_name": "Indexer User",
+      "description": "A Wazuh Indexer (OpenSearch) internal user with direct access to log data.",
+      "is_display_kind": true,
+      "icon": "user-secret",
+      "color": "#BE185D"
+    },
+    {
+      "name": "WZ_IndexerRole",
+      "display_name": "Indexer Role",
+      "description": "An OpenSearch security role defining cluster and index permissions.",
+      "is_display_kind": true,
+      "icon": "key",
+      "color": "#9D174D"
+    },
+    {
+      "name": "WZ_NetworkSegment",
+      "display_name": "Network Segment",
+      "description": "An IP subnet containing one or more Wazuh agents.",
+      "is_display_kind": true,
+      "icon": "network-wired",
+      "color": "#0F766E"
+    }
+  ],
+  "relationship_kinds": [
+    {
+      "name": "WZ_MemberOf",
+      "display_name": "Member Of",
+      "description": "Agent belongs to an agent group.",
+      "is_traversable": true
+    },
+    {
+      "name": "WZ_ConnectedTo",
+      "display_name": "Connected To",
+      "description": "Agent reports to a cluster node.",
+      "is_traversable": true
+    },
+    {
+      "name": "WZ_PartOf",
+      "display_name": "Part Of",
+      "description": "Node is part of a cluster (manager or indexer).",
+      "is_traversable": true
+    },
+    {
+      "name": "WZ_ManagedBy",
+      "display_name": "Managed By",
+      "description": "Agent group is managed by the Wazuh cluster.",
+      "is_traversable": true
+    },
+    {
+      "name": "WZ_Monitors",
+      "display_name": "Monitors",
+      "description": "Wazuh manager cluster sends events to the indexer cluster.",
+      "is_traversable": true
+    },
+{
+      "name": "WZ_HasRole",
+      "display_name": "Has Role",
+      "description": "Wazuh user is assigned a security role.",
+      "is_traversable": true
+    },
+    {
+      "name": "WZ_HasPolicy",
+      "display_name": "Has Policy",
+      "description": "Wazuh role includes a security policy.",
+      "is_traversable": true
+    },
+    {
+      "name": "WZ_AccessesIndexer",
+      "display_name": "Accesses Indexer",
+      "description": "Indexer internal user has access to the indexer cluster.",
+      "is_traversable": true
+    },
+    {
+      "name": "WZ_MappedToRole",
+      "display_name": "Mapped To Role",
+      "description": "Indexer user is mapped to an OpenSearch security role.",
+      "is_traversable": true
+    },
+    {
+      "name": "WZ_CanControlAgent",
+      "display_name": "Can Control Agent",
+      "description": "Policy grants agent control actions (restart, upgrade, delete) on this target.",
+      "is_traversable": true
+    },
+    {
+      "name": "WZ_CanManageSecurity",
+      "display_name": "Can Manage Security",
+      "description": "Policy grants user/role/policy management - privilege escalation path.",
+      "is_traversable": true
+    },
+    {
+      "name": "WZ_CanReadIndex",
+      "display_name": "Can Read Index",
+      "description": "Indexer role grants read access to log indices.",
+      "is_traversable": true
+    },
+    {
+      "name": "WZ_CanWriteIndex",
+      "display_name": "Can Write Index",
+      "description": "Indexer role grants write access to log indices.",
+      "is_traversable": true
+    },
+    {
+      "name": "WZ_InSegment",
+      "display_name": "In Segment",
+      "description": "Agent belongs to a network segment (subnet).",
+      "is_traversable": true
+    },
+    {
+      "name": "WZ_CanImpersonate",
+      "display_name": "Can Impersonate",
+      "description": "User has allow_run_as - can impersonate other users via the API.",
+      "is_traversable": true
+    },
+    {
+      "name": "WZ_CanInjectEvents",
+      "display_name": "Can Inject Events",
+      "description": "Policy allows event:ingest - can inject fake log events into the manager (detection bypass / log poisoning).",
+      "is_traversable": true
+    },
+    {
+      "name": "WZ_CanExecuteAR",
+      "display_name": "Can Execute AR",
+      "description": "Policy allows active-response:command - can execute scripts on agents via the API.",
+      "is_traversable": true
+    },
+    {
+      "name": "WZ_CanWriteConfig",
+      "display_name": "Can Write Config",
+      "description": "Policy allows manager:upload or configuration:update - can overwrite active-response scripts or ossec.conf on the manager (RCE path).",
+      "is_traversable": true
+    },
+    {
+      "name": "WZ_SharedSegment",
+      "display_name": "Shared Segment",
+      "description": "Two agents share a network segment - lateral movement path.",
+      "is_traversable": true
+    }
+  ]
+}

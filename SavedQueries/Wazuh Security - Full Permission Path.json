@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Security - Full Permission Path",
+  "query": "MATCH p=(u:WZ_User)-[:WZ_HasRole]->(r:WZ_Role)-[:WZ_HasPolicy]->(pol:WZ_Policy) RETURN p ORDER BY u.name"
+}

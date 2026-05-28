@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Path - Inbound to Indexer",
+  "query": "MATCH (u:WZ_IndexerUser), (ic:WZ_IndexerCluster) WHERE u <> ic MATCH p = shortestPath((u)-[:WZ_AccessesIndexer|WZ_MappedToRole|WZ_CanReadIndex|WZ_CanWriteIndex*1..10]->(ic)) RETURN p ORDER BY length(p)"
+}

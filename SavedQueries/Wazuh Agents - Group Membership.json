@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Agents - Group Membership",
+  "query": "MATCH p=(a:WZ_Agent)-[:WZ_MemberOf]->(g:WZ_AgentGroup) RETURN p ORDER BY g.name, a.name"
+}

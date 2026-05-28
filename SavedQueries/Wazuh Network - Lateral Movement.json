@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Network - Lateral Movement",
+  "query": "MATCH p=(a:WZ_Agent)-[:WZ_SharedSegment]->(b:WZ_Agent) RETURN p ORDER BY a.name"
+}

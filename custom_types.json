@@ -1,0 +1,88 @@
+{
+  "custom_types": {
+    "WZ_Agent": {
+      "icon": {
+        "type": "font-awesome",
+        "name": "laptop",
+        "color": "#3B82F6"
+      }
+    },
+    "WZ_AgentGroup": {
+      "icon": {
+        "type": "font-awesome",
+        "name": "users",
+        "color": "#F97316"
+      }
+    },
+"WZ_ClusterNode": {
+      "icon": {
+        "type": "font-awesome",
+        "name": "server",
+        "color": "#8B5CF6"
+      }
+    },
+    "WZ_Cluster": {
+      "icon": {
+        "type": "font-awesome",
+        "name": "network-wired",
+        "color": "#1D4ED8"
+      }
+    },
+    "WZ_IndexerNode": {
+      "icon": {
+        "type": "font-awesome",
+        "name": "database",
+        "color": "#0EA5E9"
+      }
+    },
+    "WZ_IndexerCluster": {
+      "icon": {
+        "type": "font-awesome",
+        "name": "circle-nodes",
+        "color": "#0369A1"
+      }
+    },
+    "WZ_User": {
+      "icon": {
+        "type": "font-awesome",
+        "name": "user",
+        "color": "#7C3AED"
+      }
+    },
+    "WZ_Role": {
+      "icon": {
+        "type": "font-awesome",
+        "name": "id-badge",
+        "color": "#D97706"
+      }
+    },
+    "WZ_Policy": {
+      "icon": {
+        "type": "font-awesome",
+        "name": "scroll",
+        "color": "#0D9488"
+      }
+    },
+    "WZ_IndexerUser": {
+      "icon": {
+        "type": "font-awesome",
+        "name": "user-secret",
+        "color": "#BE185D"
+      }
+    },
+    "WZ_IndexerRole": {
+      "icon": {
+        "type": "font-awesome",
+        "name": "key",
+        "color": "#9D174D"
+      }
+    },
+    "WZ_NetworkSegment": {
+      "icon": {
+        "type": "font-awesome",
+        "name": "network-wired",
+        "color": "#0F766E"
+      }
+    }
+  }
+}

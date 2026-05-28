@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Indexer - Master Nodes",
+  "query": "MATCH p=(n:WZ_IndexerNode)-[:WZ_PartOf]->(c:WZ_IndexerCluster) WHERE n.roles CONTAINS 'master' RETURN p ORDER BY n.name"
+}

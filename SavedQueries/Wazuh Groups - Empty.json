@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Groups - Empty (No Agents)",
+  "query": "MATCH (g:WZ_AgentGroup) WHERE NOT (:WZ_Agent)-[:WZ_MemberOf]->(g) RETURN g ORDER BY g.name"
+}

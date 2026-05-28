@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Network - Infrastructure to Indexer",
+  "query": "MATCH p=(c:WZ_Cluster)-[:WZ_Monitors]->(ic:WZ_IndexerCluster) RETURN p"
+}

@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Attack - Active Response Abuse (RCE via AR)",
+  "query": "MATCH p=(u:WZ_User)-[:WZ_HasRole]->(:WZ_Role)-[:WZ_HasPolicy]->(:WZ_Policy)-[:WZ_CanExecuteAR]->() RETURN p ORDER BY u.name"
+}

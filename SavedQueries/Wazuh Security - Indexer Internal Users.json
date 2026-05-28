@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Security - Indexer Internal Users",
+  "query": "MATCH p=(u:WZ_IndexerUser)-[:WZ_AccessesIndexer]->(ic:WZ_IndexerCluster) RETURN p ORDER BY u.name"
+}

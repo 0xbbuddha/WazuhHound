@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Path - Inbound to Cluster",
+  "query": "MATCH (u:WZ_User), (c:WZ_Cluster) WHERE u <> c MATCH p = shortestPath((u)-[:WZ_HasRole|WZ_HasPolicy|WZ_CanManageSecurity|WZ_CanImpersonate|WZ_CanInjectEvents|WZ_CanExecuteAR*1..10]->(c)) RETURN p ORDER BY length(p)"
+}

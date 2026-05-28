@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Attack - All Paths",
+  "query": "MATCH p=()-[:WZ_CanControlAgent|WZ_CanManageSecurity|WZ_CanReadIndex|WZ_CanWriteIndex]->() RETURN p"
+}

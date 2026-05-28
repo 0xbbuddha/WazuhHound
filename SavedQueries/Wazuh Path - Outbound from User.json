@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Path - Outbound from User",
+  "query": "MATCH p = (u:WZ_User)-[:WZ_HasRole|WZ_HasPolicy|WZ_CanManageSecurity|WZ_CanImpersonate|WZ_CanInjectEvents|WZ_CanExecuteAR*1..6]->() RETURN p ORDER BY u.name"
+}

@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Security - Policies Allow Effect",
+  "query": "MATCH (p:WZ_Policy) WHERE p.effect = 'allow' RETURN p ORDER BY p.name"
+}

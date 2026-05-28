@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Security - Admin Users",
+  "query": "MATCH p=(u:WZ_User)-[:WZ_HasRole]->(r:WZ_Role) WHERE r.name IN ['administrator', 'wazuh', 'wazuh-wui'] RETURN p ORDER BY u.name"
+}

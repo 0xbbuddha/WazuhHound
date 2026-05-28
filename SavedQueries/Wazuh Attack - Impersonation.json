@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Attack - Impersonation (allow_run_as)",
+  "query": "MATCH p=(u:WZ_User)-[:WZ_CanImpersonate]->(:WZ_Cluster) RETURN p ORDER BY u.name"
+}

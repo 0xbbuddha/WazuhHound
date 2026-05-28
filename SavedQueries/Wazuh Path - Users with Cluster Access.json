@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Path - Users with Cluster Access",
+  "query": "MATCH (u:WZ_User)-[:WZ_HasRole*1..3]->(:WZ_Role)-[:WZ_HasPolicy]->(:WZ_Policy)-[:WZ_CanManageSecurity|WZ_CanInjectEvents|WZ_CanExecuteAR]->(:WZ_Cluster) RETURN DISTINCT u.name AS User ORDER BY User"
+}

@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Cluster - Overview",
+  "query": "MATCH p=(n:WZ_ClusterNode)-[:WZ_PartOf]->(c:WZ_Cluster) RETURN p"
+}

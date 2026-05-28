@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Indexer - Roles Overview",
+  "query": "MATCH (r:WZ_IndexerRole) RETURN r ORDER BY r.name"
+}

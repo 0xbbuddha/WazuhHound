@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Attack - Indexer Read Access",
+  "query": "MATCH p=(u:WZ_IndexerUser)-[:WZ_MappedToRole]->(r:WZ_IndexerRole)-[:WZ_CanReadIndex|WZ_CanWriteIndex]->(ic:WZ_IndexerCluster) RETURN p ORDER BY u.name"
+}

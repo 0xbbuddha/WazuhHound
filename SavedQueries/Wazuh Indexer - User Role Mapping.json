@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Indexer - User Role Mapping",
+  "query": "MATCH p=(u:WZ_IndexerUser)-[:WZ_MappedToRole]->(r:WZ_IndexerRole) RETURN p ORDER BY u.name"
+}

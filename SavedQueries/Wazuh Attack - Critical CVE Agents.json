@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Attack - Critical CVE Agents",
+  "query": "MATCH (a:WZ_Agent) WHERE a.vuln_critical > 0 RETURN a ORDER BY a.vuln_critical DESC"
+}

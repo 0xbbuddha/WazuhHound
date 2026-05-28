@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Attack - Privilege Escalation",
+  "query": "MATCH p=(u:WZ_User)-[:WZ_HasRole]->(:WZ_Role)-[:WZ_HasPolicy]->(pol:WZ_Policy)-[:WZ_CanManageSecurity]->(:WZ_Cluster) RETURN p ORDER BY u.name"
+}

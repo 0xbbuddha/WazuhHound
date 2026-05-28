@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Indexer - User Full Path",
+  "query": "MATCH p=(u:WZ_IndexerUser)-[:WZ_MappedToRole]->(r:WZ_IndexerRole), (u)-[:WZ_AccessesIndexer]->(ic:WZ_IndexerCluster) RETURN p ORDER BY u.name"
+}

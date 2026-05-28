@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wazuhhound"
+version = "0.1.0"
+description = "BloodHound CE OpenGraph collector for Wazuh"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+  { name = "WazuhHound contributors" }
+]
+dependencies = [
+  "requests",
+  "python-dotenv",
+  "bhopengraph",
+]
+
+[project.urls]
+Repository = "https://github.com/your-org/WazuhHound"
+
+[project.scripts]
+wazuhhound = "wazuhhound:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["wazuhhound*"]
+namespaces = true

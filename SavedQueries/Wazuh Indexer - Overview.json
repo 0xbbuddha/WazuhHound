@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Indexer - Overview",
+  "query": "MATCH p=(n:WZ_IndexerNode)-[:WZ_PartOf]->(c:WZ_IndexerCluster) RETURN p"
+}

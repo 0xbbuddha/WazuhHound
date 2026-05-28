@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Attack - High Risk Agents",
+  "query": "MATCH (a:WZ_Agent) WHERE a.risk_score >= 5 RETURN a ORDER BY a.risk_score DESC"
+}

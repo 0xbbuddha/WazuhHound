@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Attack - RBAC Black Mode (Default-Allow)",
+  "query": "MATCH (c:WZ_Cluster) WHERE c.rbac_mode = 'black' RETURN c"
+}

@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Network - Agent to Indexer",
+  "query": "MATCH p=(a:WZ_Agent)-[:WZ_ConnectedTo]->(n:WZ_ClusterNode)-[:WZ_PartOf]->(c:WZ_Cluster)-[:WZ_Monitors]->(ic:WZ_IndexerCluster) RETURN p"
+}

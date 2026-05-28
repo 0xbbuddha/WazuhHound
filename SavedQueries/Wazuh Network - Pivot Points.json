@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Network - Pivot Points (Multi-Homed Agents)",
+  "query": "MATCH (a:WZ_Agent)-[:WZ_InSegment]->(s:WZ_NetworkSegment) WITH a, count(s) AS seg_count WHERE seg_count > 1 MATCH p=(a)-[:WZ_InSegment]->(:WZ_NetworkSegment) RETURN p ORDER BY seg_count DESC"
+}

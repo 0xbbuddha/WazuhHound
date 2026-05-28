@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Attack - AR on Manager (Agent 000)",
+  "query": "MATCH p=()-[:WZ_CanExecuteAR]->(:WZ_Agent {is_manager: true}) RETURN p"
+}

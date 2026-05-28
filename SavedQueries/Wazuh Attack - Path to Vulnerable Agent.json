@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Attack - Path to Vulnerable Agent",
+  "query": "MATCH p=(u:WZ_User)-[:WZ_HasRole]->(:WZ_Role)-[:WZ_HasPolicy]->(:WZ_Policy)-[:WZ_CanControlAgent]->(a:WZ_Agent) WHERE a.vuln_critical > 0 RETURN p ORDER BY a.vuln_critical DESC"
+}
