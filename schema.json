@@ -95,6 +95,14 @@
       "color": "#9D174D"
     },
     {
+      "name": "WZ_RoleMapping",
+      "display_name": "Role Mapping",
+      "description": "A Wazuh RBAC rule that automatically assigns roles to users based on conditions (username, backend_roles, etc.).",
+      "is_display_kind": true,
+      "icon": "code-branch",
+      "color": "#6366F1"
+    },
+    {
       "name": "WZ_NetworkSegment",
       "display_name": "Network Segment",
       "description": "An IP subnet containing one or more Wazuh agents.",
@@ -204,6 +212,18 @@
       "name": "WZ_CanExecuteAR",
       "display_name": "Can Execute AR",
       "description": "Policy allows active-response:command - can execute scripts on agents via the API.",
+      "is_traversable": true
+    },
+    {
+      "name": "WZ_AutoAssigns",
+      "display_name": "Auto Assigns",
+      "description": "Role mapping rule automatically assigns a role when its condition matches.",
+      "is_traversable": true
+    },
+    {
+      "name": "WZ_AppliesTo",
+      "display_name": "Applies To",
+      "description": "Role mapping rule applies to this user (condition evaluated from known user attributes).",
       "is_traversable": true
     },
     {

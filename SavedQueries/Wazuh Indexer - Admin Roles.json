@@ -1,4 +1,4 @@
 {
   "name": "Wazuh Indexer - Admin Roles",
-  "query": "MATCH p=(u:WZ_IndexerUser)-[:WZ_MappedToRole]->(r:WZ_IndexerRole) WHERE r.name IN ['all_access', 'security_manager', 'kibana_server'] RETURN p ORDER BY u.name"
+  "query": "MATCH p=(u:WZ_IndexerUser)-[:WZ_MappedToRole]->(r:WZ_IndexerRole) WHERE r.name = 'all_access' OR r.name = 'security_manager' OR r.name = 'kibana_server' RETURN p ORDER BY u.name"
 }

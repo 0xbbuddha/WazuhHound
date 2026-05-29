@@ -1,0 +1,269 @@
+<!-- Article pour le blog Aukfood - a coller dans un bloc HTML/Classique WordPress -->
+<!-- IMAGES : remplacer IMAGE_1 a IMAGE_4 par les URLs apres upload dans la mediatheque WordPress -->
+<!--
+  IMAGE_1 = fichier copie.png  -> saved queries + graphe WZ_CanImpersonate
+  IMAGE_2 = fichier copie2.png -> chemin RBAC complet (user -> role -> policies)
+  IMAGE_3 = fichier copie3.png -> acces indexer en ecriture (WZ_CanWriteIndex)
+  IMAGE_4 = fichier copie4.png -> topologie indexer cluster (WZ_PartOf)
+-->
+
+<style>
+  .wzh-article pre .prompt { color: #4ade80; }
+  .wzh-article pre .cmd    { color: #93c5fd; }
+  .wzh-article pre .out    { color: #94a3b8; }
+  .wzh-article pre .hi     { color: #fbbf24; }
+  .wzh-article pre .dim    { color: #475569; }
+  .wzh-article pre .ok     { color: #4ade80; }
+  .wzh-article pre .err    { color: #f87171; }
+  .wzh-article .wzh-features li::before {
+    content: "\2192";
+    position: absolute;
+    left: 0;
+    color: #2563eb;
+    font-weight: 700;
+  }
+</style>
+
+<div class="wzh-article" style="max-width:820px;margin:0 auto;font-family:inherit;line-height:1.75;color:inherit;box-sizing:border-box;">
+
+  <!-- Tag + meta -->
+  <span style="display:inline-block;background:#1e3a5f;color:#fff;font-size:0.72em;font-weight:600;letter-spacing:0.05em;padding:2px 10px;border-radius:3px;margin-bottom:1.2em;text-transform:uppercase;">Securite OpenSource</span>
+
+  <p style="font-size:0.85em;color:#64748b;margin-bottom:2em;">
+    Par Killian Prin-Abeil - Aukfood
+    <span style="display:inline-flex;align-items:center;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;font-size:0.82em;font-weight:600;padding:3px 12px;border-radius:20px;margin-left:0.6em;vertical-align:middle;">&#x2B50; Wazuh Ambassador</span>
+  </p>
+
+  <!-- Intro -->
+  <div style="font-size:1.08em;border-left:4px solid #2563eb;padding:0.8em 1.2em;background:#f0f6ff;border-radius:0 6px 6px 0;margin-bottom:2em;color:#1e3a5f;">
+    Wazuh est au coeur de notre stack SOC open source. On l'utilise au quotidien pour surveiller nos endpoints, centraliser nos logs, gerer la conformite. Mais une question simple restait sans reponse simple : qui peut faire quoi, sur quoi, dans notre deploiement Wazuh ? WazuhHound est ne de cette question.
+  </div>
+
+  <!-- Stats bar -->
+  <table style="width:100%;border-collapse:separate;border-spacing:10px;margin:2em 0;">
+    <tr>
+      <td style="background:#0f172a;border-radius:10px;padding:1em;text-align:center;width:25%;">
+        <span style="display:block;font-size:1.9em;font-weight:800;color:#38bdf8;line-height:1.1;">13</span>
+        <span style="display:block;font-size:0.72em;color:#94a3b8;margin-top:0.3em;text-transform:uppercase;letter-spacing:0.05em;">types de noeuds</span>
+      </td>
+      <td style="background:#0f172a;border-radius:10px;padding:1em;text-align:center;width:25%;">
+        <span style="display:block;font-size:1.9em;font-weight:800;color:#38bdf8;line-height:1.1;">21</span>
+        <span style="display:block;font-size:0.72em;color:#94a3b8;margin-top:0.3em;text-transform:uppercase;letter-spacing:0.05em;">types de relations</span>
+      </td>
+      <td style="background:#0f172a;border-radius:10px;padding:1em;text-align:center;width:25%;">
+        <span style="display:block;font-size:1.9em;font-weight:800;color:#38bdf8;line-height:1.1;">50</span>
+        <span style="display:block;font-size:0.72em;color:#94a3b8;margin-top:0.3em;text-transform:uppercase;letter-spacing:0.05em;">requêtes Cypher incluses</span>
+      </td>
+      <td style="background:#0f172a;border-radius:10px;padding:1em;text-align:center;width:25%;">
+        <span style="display:block;font-size:1.9em;font-weight:800;color:#38bdf8;line-height:1.1;">MIT</span>
+        <span style="display:block;font-size:0.72em;color:#94a3b8;margin-top:0.3em;text-transform:uppercase;letter-spacing:0.05em;">open source</span>
+      </td>
+    </tr>
+  </table>
+
+  <h2>Le problème : Wazuh répond aux questions, pas aux relations</h2>
+
+  <p>On utilise Wazuh depuis un moment. On connaît bien l'API, on sait chercher un agent, lister des groupes, inspecter des permissions. Mais à un moment, face à une question d'audit interne - <em>qui a réellement accès à quoi dans notre déploiement ?</em> - on a réalisé que l'API ne répondait pas à ce type de question. Pas parce qu'elle manque de données, mais parce qu'elle ne pense pas en termes de relations entre ces données.</p>
+
+  <p>Un utilisateur a des rôles. Un rôle a des politiques. Une politique a des actions sur des ressources. Des agents sont dans des groupes, gérés par un cluster, connectés à un noeud. Tout ça existe dans l'API - mais éparpillé sur des dizaines d'endpoints, sans vue d'ensemble. Pour comprendre le chemin complet, il fallait croiser les réponses à la main. Pas scalable, pas auditabie, pas visualisable.</p>
+
+  <p>La question qu'on s'est posée : et si on traitait l'infrastructure Wazuh comme un graphe ?</p>
+
+  <h2>BloodHound CE comme moteur de cartographie</h2>
+
+  <p>BloodHound est un outil bien connu dans la communaute securite - initialement concu pour cartographier les relations dans Active Directory. Mais son moteur - un graphe Neo4j requetable en Cypher, avec une interface visuelle - est exactement ce dont on avait besoin pour Wazuh.</p>
+
+  <p>BloodHound CE (Community Edition) supporte les <strong>extensions OpenGraph</strong> : des schemas personnalises qui permettent de definir ses propres types de noeuds et de relations, completement independants d'Active Directory. On a concu WazuhHound comme une extension native de cette architecture.</p>
+
+  <p>Le principe : collecter l'ensemble des donnees Wazuh via l'API, les transformer en graphe OpenGraph, et les injecter dans BloodHound CE pour les explorer visuellement et les interroger en Cypher.</p>
+
+  <h2>Ce que WazuhHound cartographie</h2>
+
+  <p>WazuhHound definit 12 types de noeuds qui couvrent l'integralite d'un deploiement Wazuh :</p>
+
+  <table style="width:100%;border-collapse:separate;border-spacing:8px;margin:1.6em 0;">
+    <tr style="vertical-align:top;">
+      <td style="width:33%;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:1em;">
+        <div style="font-weight:700;font-size:0.85em;color:#1e293b;margin-bottom:0.6em;border-bottom:2px solid #2563eb;padding-bottom:0.4em;">Infrastructure</div>
+        <div style="font-size:0.82em;color:#475569;line-height:1.8;">
+          <code>WZ_Cluster</code><br>
+          <code>WZ_ClusterNode</code><br>
+          <code>WZ_IndexerCluster</code><br>
+          <code>WZ_IndexerNode</code>
+        </div>
+      </td>
+      <td style="width:33%;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:1em;">
+        <div style="font-weight:700;font-size:0.85em;color:#1e293b;margin-bottom:0.6em;border-bottom:2px solid #2563eb;padding-bottom:0.4em;">Agents et reseau</div>
+        <div style="font-size:0.82em;color:#475569;line-height:1.8;">
+          <code>WZ_Agent</code><br>
+          <code>WZ_AgentGroup</code><br>
+          <code>WZ_NetworkSegment</code>
+        </div>
+      </td>
+      <td style="width:33%;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:1em;">
+        <div style="font-weight:700;font-size:0.85em;color:#1e293b;margin-bottom:0.6em;border-bottom:2px solid #2563eb;padding-bottom:0.4em;">Securite RBAC + Indexer</div>
+        <div style="font-size:0.82em;color:#475569;line-height:1.8;">
+          <code>WZ_User</code><br>
+          <code>WZ_Role</code><br>
+          <code>WZ_Policy</code><br>
+          <code>WZ_IndexerUser</code><br>
+          <code>WZ_IndexerRole</code>
+        </div>
+      </td>
+    </tr>
+  </table>
+
+  <figure style="margin:2em 0;text-align:center;">
+    <img src="https://www.aukfood.fr/wp-content/uploads/2026/05/fichier-copie4-1024x496.png" alt="Topologie indexer Wazuh dans BloodHound CE" style="max-width:100%;border-radius:8px;border:1px solid #e2e8f0;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+    <figcaption style="font-size:0.8em;color:#64748b;margin-top:0.6em;">Topologie de l'indexer Wazuh : les noeuds OpenSearch (WZ_IndexerNode) et leur cluster (WZ_IndexerCluster) visualises dans BloodHound CE via la relation WZ_PartOf.</figcaption>
+  </figure>
+
+  <p>Chaque noeud est enrichi avec les proprietes collectees depuis l'API : statut, version, IP, configuration RBAC, scores de vulnerabilite, ports en ecoute, nombre de packages installes. Les 19 types de relations permettent d'interroger le graphe avec precision - et les 48 requetes Cypher pre-integrees couvrent les cas d'usage les plus courants.</p>
+
+  <h2>Les permissions RBAC visualisees comme un graphe</h2>
+
+  <p>La partie la plus utile au quotidien, c'est la cartographie RBAC. Wazuh utilise un modele Utilisateurs -> Roles -> Politiques. Chaque politique definit des actions et des ressources. WazuhHound traduit ce modele en edges traversables dans BloodHound CE - ce qui permet de visualiser d'un coup d'oeil qui a acces a quoi, et via quel chemin.</p>
+
+  <figure style="margin:2em 0;text-align:center;">
+    <img src="https://www.aukfood.fr/wp-content/uploads/2026/05/fichier-copie-1024x634.png" alt="Saved queries WazuhHound et relation WZ_CanImpersonate dans BloodHound CE" style="max-width:100%;border-radius:8px;border:1px solid #e2e8f0;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+    <figcaption style="font-size:0.8em;color:#64748b;margin-top:0.6em;">Le panneau des requetes sauvegardees WazuhHound, et un exemple de relation WZ_CanImpersonate : les utilisateurs wazuh et wazuh-wui peuvent usurper l'identite d'autres utilisateurs via l'option allow_run_as.</figcaption>
+  </figure>
+
+  <p>Une requete simple pour voir le chemin complet de permissions depuis les utilisateurs :</p>
+
+  <pre style="background:#0f172a;color:#e2e8f0;border-radius:8px;padding:1.2em 1.4em;overflow-x:auto;font-size:0.88em;line-height:1.6;margin:1.4em 0;white-space:pre;">
+<span class="dim">-- Chemin complet : utilisateur -> role -> politique -> ressource</span>
+<span class="cmd">MATCH p=(u:WZ_User)
+  -[:WZ_HasRole]->(:WZ_Role)
+  -[:WZ_HasPolicy]->(:WZ_Policy)
+  -[:WZ_CanControlAgent|WZ_CanManageSecurity]->()
+RETURN p ORDER BY u.name</span></pre>
+
+  <figure style="margin:2em 0;text-align:center;">
+    <img src="https://www.aukfood.fr/wp-content/uploads/2026/05/fichier-copie2-1024x616.png" alt="Chemin complet de permissions RBAC Wazuh dans BloodHound CE" style="max-width:100%;border-radius:8px;border:1px solid #e2e8f0;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+    <figcaption style="font-size:0.8em;color:#64748b;margin-top:0.6em;">Chemin complet de permissions : depuis les utilisateurs Wazuh, via le role Administrator, vers les politiques SECURITY_ALL et AGENTS_ALL qui accordent le controle des agents et la gestion de la securite.</figcaption>
+  </figure>
+
+  <h2>L'indexer OpenSearch aussi est cartographie</h2>
+
+  <p>WazuhHound ne se limite pas au manager Wazuh. Avec le parametre <code>--indexer-url</code>, il interroge directement l'API OpenSearch Security pour collecter les utilisateurs internes, les roles, et leurs mappings. Les droits de lecture et d'ecriture sur les index de logs sont modelises comme des edges traversables dans le graphe.</p>
+
+  <figure style="margin:2em 0;text-align:center;">
+    <img src="https://www.aukfood.fr/wp-content/uploads/2026/05/fichier-copie3-1024x619.png" alt="Roles OpenSearch avec acces en ecriture sur l'indexer Wazuh" style="max-width:100%;border-radius:8px;border:1px solid #e2e8f0;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+    <figcaption style="font-size:0.8em;color:#64748b;margin-top:0.6em;">Roles OpenSearch avec acces en ecriture sur l'indexer Wazuh : MANAGE_SNAPSHOTS, LOGSTASH et ALL_ACCESS visualises avec leurs relations WZ_CanWriteIndex vers le cluster.</figcaption>
+  </figure>
+
+  <h2>Enrichissement des agents</h2>
+
+  <p>Chaque agent est enrichi en parallele avec les donnees syscollector :</p>
+
+  <ul class="wzh-features" style="list-style:none;padding:0;margin:1em 0 1.4em 0;">
+    <li style="padding:0.35em 0 0.35em 1.6em;position:relative;"><strong>Vulnerabilites</strong> : comptages critical/high/medium depuis l'index OpenSearch <code>wazuh-states-vulnerabilities-*</code> ou l'API legacy Wazuh &lt;= 4.7</li>
+    <li style="padding:0.35em 0 0.35em 1.6em;position:relative;"><strong>Score de risque 0-10</strong> : calcule automatiquement a partir des CVE, du statut de l'agent, et d'heuristiques de version OS</li>
+    <li style="padding:0.35em 0 0.35em 1.6em;position:relative;"><strong>Ports en ecoute</strong> : services exposes sur chaque agent via syscollector/ports</li>
+    <li style="padding:0.35em 0 0.35em 1.6em;position:relative;"><strong>Packages installes</strong> : nombre de packages pour evaluer la surface exposee</li>
+    <li style="padding:0.35em 0 0.35em 1.6em;position:relative;"><strong>Segments reseau</strong> : sous-reseaux derives depuis syscollector/netaddr, avec identification des agents multi-homes</li>
+  </ul>
+
+  <pre style="background:#0f172a;color:#e2e8f0;border-radius:8px;padding:1.2em 1.4em;overflow-x:auto;font-size:0.88em;line-height:1.6;margin:1.4em 0;white-space:pre;">
+<span class="dim">-- Agents avec les scores de risque les plus eleves</span>
+<span class="cmd">MATCH (a:WZ_Agent)
+WHERE a.risk_score >= 5
+RETURN a.name, a.vuln_critical, a.vuln_high, a.risk_score
+ORDER BY a.risk_score DESC</span>
+
+<span class="hi">name             vuln_critical   vuln_high   risk_score</span>
+<span class="out">srv-prod-02      4               7           </span><span class="err">8.7</span>
+<span class="out">desktop-rh-01    2               3           </span><span class="err">6.1</span>
+<span class="out">laptop-dev-03    1               2           </span><span class="out">5.3</span></pre>
+
+  <h2>Installation en 3 etapes</h2>
+
+  <pre style="background:#0f172a;color:#e2e8f0;border-radius:8px;padding:1.2em 1.4em;overflow-x:auto;font-size:0.88em;line-height:1.6;margin:1.4em 0;white-space:pre;">
+<span class="dim"># 1. Cloner et installer</span>
+<span class="prompt">$ </span><span class="cmd">git clone https://github.com/0xbbuddha/WazuhHound.git
+cd WazuhHound &amp;&amp; pip install -e .</span>
+
+<span class="dim"># 2. Uploader le schema dans BloodHound CE (une seule fois)</span>
+<span class="prompt">$ </span><span class="cmd">python3 helper-scripts/upload_schema.py \
+  --url http://localhost:8080 \
+  --username admin --secret "$BH_SECRET"
+python3 helper-scripts/upload_custom_icons.py \
+  --url http://localhost:8080 \
+  --username admin --secret "$BH_SECRET"
+python3 helper-scripts/upload_saved_queries.py \
+  --url http://localhost:8080 \
+  --username admin --secret "$BH_SECRET"</span>
+
+<span class="dim"># 3. Lancer la collecte</span>
+<span class="prompt">$ </span><span class="cmd">wazuhhound \
+  --wazuh-url https://wazuh:55000 \
+  --wazuh-user admin --wazuh-password secret \
+  --indexer-url https://wazuh:9200 \
+  --output ./output --insecure</span>
+
+<span class="ok">[+] Collected:</span>
+<span class="out">    Agents   : 29</span>
+<span class="out">    Groups   : 13</span>
+<span class="out">    Cluster  : wazuh-manager (1 node(s), standalone)</span>
+<span class="out">    Indexer  : wazuh-cluster (2 node(s))</span>
+<span class="out">    Users    : 6 (manager API)</span>
+<span class="out">    Segments : 4 network segment(s)</span>
+<span class="out">    Vulns    : 8 agent(s) with vulnerabilities</span>
+<span class="ok">[+] OpenGraph exported:</span>
+<span class="out">    Nodes : 87</span>
+<span class="out">    Edges : 214</span>
+<span class="out">    File  : ./output/wazuhhound_20260529143201.json</span></pre>
+
+  <h2>Pourquoi Python ?</h2>
+
+  <table style="width:100%;border-collapse:separate;border-spacing:10px;margin:1.6em 0;">
+    <tr style="vertical-align:top;">
+      <td style="width:33%;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:1.2em;text-align:center;">
+        <span style="display:block;font-size:1.8em;margin-bottom:0.4em;">&#x1F40D;</span>
+        <span style="display:block;font-weight:700;font-size:0.9em;color:#1e293b;margin-bottom:0.4em;">Ecosysteme Wazuh</span>
+        <span style="display:block;font-size:0.8em;color:#64748b;line-height:1.4;">Python est le langage de l'ecosysteme Wazuh. Les outils, les scripts d'integration, les exemples de documentation - tout est en Python.</span>
+      </td>
+      <td style="width:33%;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:1.2em;text-align:center;">
+        <span style="display:block;font-size:1.8em;margin-bottom:0.4em;">&#x1F4E6;</span>
+        <span style="display:block;font-weight:700;font-size:0.9em;color:#1e293b;margin-bottom:0.4em;">bhopengraph</span>
+        <span style="display:block;font-size:0.8em;color:#64748b;line-height:1.4;">La librairie BloodHound OpenGraph est disponible en Python et gere nativement le format d'export compatible BloodHound CE.</span>
+      </td>
+      <td style="width:33%;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:1.2em;text-align:center;">
+        <span style="display:block;font-size:1.8em;margin-bottom:0.4em;">&#x1F527;</span>
+        <span style="display:block;font-weight:700;font-size:0.9em;color:#1e293b;margin-bottom:0.4em;">Extensible</span>
+        <span style="display:block;font-size:0.8em;color:#64748b;line-height:1.4;">Ajouter un nouveau type de noeud ou une nouvelle source d'enrichissement prend quelques lignes. Pas de compilation, pas de toolchain.</span>
+      </td>
+    </tr>
+  </table>
+
+  <div style="background:#fefce8;border-left:4px solid #f59e0b;padding:0.8em 1.2em;border-radius:0 6px 6px 0;font-size:0.95em;margin:1.6em 0;color:#78350f;">
+    <strong>Compatibilite :</strong> WazuhHound fonctionne avec Wazuh 4.x. Il s'appuie sur l'API Manager (port 55000) et optionnellement sur l'API OpenSearch Security (port 9200) pour les utilisateurs internes, les roles indexer, et les donnees de vulnerabilite Wazuh 4.8+.
+  </div>
+
+  <h2>Et maintenant ?</h2>
+
+  <p>WazuhHound tourne en production chez nous. On l'utilise concrètement pour auditer les permissions RBAC, vérifier la topologie de nos déploiements, et identifier rapidement les agents mal configurés ou exposés. C'est devenu un réflexe avant chaque revue de sécurité.</p>
+
+  <p>En tant qu'ambassadeur Wazuh, je vois ce projet comme une brique complémentaire à l'écosystème - pas un fork, pas un concurrent, juste un outil qui exploite ce que Wazuh expose déjà via son API et le rend visible d'une façon différente. Si vous administrez un déploiement Wazuh et que vous n'avez jamais eu une vue graphe de votre infrastructure, c'est le bon moment pour essayer.</p>
+
+  <!-- CTA -->
+  <div style="background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 100%);border-radius:12px;padding:2em 2.2em;margin:2.5em 0 1em;text-align:center;">
+    <h3 style="color:#fff;margin-top:0;font-size:1.3em;">WazuhHound est open source</h3>
+    <p style="color:#94a3b8;font-size:0.95em;margin-bottom:1.4em;">
+      Libre, sous licence MIT. Schema BloodHound CE, icones personnalisees, 48 requetes Cypher pre-integrees
+      et scripts helper pour l'upload - tout est inclus. Si vous utilisez Wazuh et qu'il vous manque
+      un type de noeud ou une relation, ouvrez une issue ou une PR -
+      c'est exactement comme ca que le logiciel libre avance.
+    </p>
+    <p style="margin:0;padding:0;text-align:center;">
+      <a href="https://github.com/0xbbuddha/WazuhHound" target="_blank" rel="noopener" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;padding:0.6em 1.4em;border-radius:6px;font-weight:700;font-size:0.88em;margin:0.3em;">Voir sur GitHub</a>
+      <a href="https://wazuh.com/ambassadors-program/" target="_blank" rel="noopener" style="display:inline-block;background:transparent;color:#93c5fd;text-decoration:none;padding:0.6em 1.4em;border-radius:6px;font-weight:700;font-size:0.88em;border:1px solid #2563eb;margin:0.3em;">Ambassadors Program</a>
+    </p>
+  </div>
+
+</div>
+
+- <a href="https://wazuh.com/" target="_blank" rel="noopener">Wazuh</a>
+- <a href="https://github.com/SpecterOps/BloodHound" target="_blank" rel="noopener">BloodHound CE</a>
+- <a href="https://wazuh.com/ambassadors-program/" target="_blank" rel="noopener">Ambassadors Program</a>

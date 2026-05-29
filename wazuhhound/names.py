@@ -24,6 +24,8 @@ TRAVERSABLE_EDGE_KINDS = frozenset(
         "WZ_CanExecuteAR",
         "WZ_CanWriteConfig",
         "WZ_SharedSegment",
+        "WZ_AutoAssigns",
+        "WZ_AppliesTo",
     }
 )
 

@@ -1,0 +1,4 @@
+{
+  "name": "Wazuh Security - Role Mappings",
+  "query": "MATCH p=(u)-[:WZ_AppliesTo]->(:WZ_RoleMapping)-[:WZ_AutoAssigns]->(r:WZ_Role) RETURN p ORDER BY u.name"
+}

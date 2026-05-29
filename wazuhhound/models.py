@@ -201,6 +201,20 @@ class WazuhSecurityPolicy:
 
 
 @dataclass
+class WazuhRoleMapping:
+    id: int
+    name: str
+    rule: dict
+    role_ids: List[int] = field(default_factory=list)
+
+    def object_id(self) -> str:
+        return f"wazuh-rolemapping-{self.id}"
+
+    def __repr__(self):
+        return f"WazuhRoleMapping(id={self.id}, name={self.name!r})"
+
+
+@dataclass
 class WazuhEnvironment:
     cluster: Optional[WazuhCluster] = None
     standalone_manager: Optional[str] = None
@@ -210,6 +224,7 @@ class WazuhEnvironment:
     security_users: List[WazuhSecurityUser] = field(default_factory=list)
     security_roles: List[WazuhSecurityRole] = field(default_factory=list)
     security_policies: List[WazuhSecurityPolicy] = field(default_factory=list)
+    role_mappings: List["WazuhRoleMapping"] = field(default_factory=list)
     indexer_users: List["WazuhIndexerUser"] = field(default_factory=list)
     indexer_roles: List["WazuhIndexerRole"] = field(default_factory=list)
     network_segments: List[WazuhNetworkSegment] = field(default_factory=list)
@@ -218,7 +233,7 @@ class WazuhEnvironment:
         return (
             f"WazuhEnvironment(agents={len(self.agents)}, groups={len(self.groups)}, "
             f"users={len(self.security_users)}, roles={len(self.security_roles)}, "
-            f"policies={len(self.security_policies)}, "
+            f"policies={len(self.security_policies)}, role_mappings={len(self.role_mappings)}, "
             f"indexer_users={len(self.indexer_users)}, "
             f"segments={len(self.network_segments)}, "
             f"indexer_nodes={len(self.indexer_cluster.nodes) if self.indexer_cluster else 0})"

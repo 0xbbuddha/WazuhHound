@@ -77,6 +77,13 @@
         "color": "#9D174D"
       }
     },
+    "WZ_RoleMapping": {
+      "icon": {
+        "type": "font-awesome",
+        "name": "code-branch",
+        "color": "#6366F1"
+      }
+    },
     "WZ_NetworkSegment": {
       "icon": {
         "type": "font-awesome",

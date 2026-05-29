@@ -1,4 +1,0 @@
-{
-  "name": "Wazuh Network - All Relationships",
-  "query": "MATCH p=()-[:WZ_MemberOf|WZ_ConnectedTo|WZ_PartOf]->() RETURN p"
-}

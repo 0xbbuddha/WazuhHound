@@ -17,6 +17,7 @@ from .models import (
     WazuhIndexerRole,
     WazuhIndexerUser,
     WazuhNetworkSegment,
+    WazuhRoleMapping,
     WazuhSecurityPolicy,
     WazuhSecurityRole,
     WazuhSecurityUser,
@@ -676,6 +677,51 @@ class WazuhCollector:
     # Security configuration (RBAC mode)
     # ------------------------------------------------------------------
 
+    @staticmethod
+    def _extract_rule_usernames(rule: dict) -> List[str]:
+        """Recursively extract all username values from a Wazuh role mapping rule."""
+        if not isinstance(rule, dict):
+            return []
+        usernames: List[str] = []
+        for op in ("FIND", "MATCH"):
+            condition = rule.get(op)
+            if isinstance(condition, dict):
+                for field in ("username", "user_name"):
+                    val = condition.get(field)
+                    if val and isinstance(val, str):
+                        usernames.append(val)
+        for op in ("AND", "OR"):
+            sub = rule.get(op)
+            if isinstance(sub, list):
+                for sub_rule in sub:
+                    usernames.extend(WazuhCollector._extract_rule_usernames(sub_rule))
+        return usernames
+
+    def get_security_rules(self) -> List[WazuhRoleMapping]:
+        """GET /security/rules - role mapping rules (auto-assign roles based on user attributes)."""
+        raw = self._get_all("/security/rules", "security rules")
+
+        seen_ids = {item.get("id") for item in raw}
+        reserved_ids = ",".join(str(i) for i in range(1, 100))
+        for item in self._get_all(f"/security/rules?rule_ids={reserved_ids}", "reserved security rules"):
+            if item.get("id") not in seen_ids:
+                seen_ids.add(item.get("id"))
+                raw.append(item)
+
+        mappings = []
+        for item in raw:
+            role_ids = item.get("roles") or []
+            if isinstance(role_ids, list):
+                role_ids = [int(r) if not isinstance(r, int) else r for r in role_ids]
+            mappings.append(WazuhRoleMapping(
+                id=item.get("id", 0),
+                name=item.get("name", ""),
+                rule=item.get("rule") or {},
+                role_ids=role_ids,
+            ))
+        self.logger.info(f"Total role mapping rules collected: {len(mappings)}")
+        return mappings
+
     def get_security_config(self) -> dict:
         """GET /security/config - returns rbac_mode and auth_token_exp_timeout."""
         data = self._get_one("/security/config")
@@ -894,10 +940,33 @@ class WazuhCollector:
             indexer_password=indexer_password,
         )
 
-        self.logger.info("Collecting security users/roles/policies...")
+        self.logger.info("Collecting security users/roles/policies/rules...")
         security_users = self.get_security_users()
         security_roles = self.get_security_roles()
         security_policies = self.get_security_policies()
+        role_mappings = self.get_security_rules()
+
+        # Fetch users referenced in role mapping rules but missing from the user list
+        known_usernames = {u.username for u in security_users}
+        rule_usernames: set = set()
+        for mapping in role_mappings:
+            rule_usernames.update(self._extract_rule_usernames(mapping.rule))
+        for username in rule_usernames - known_usernames:
+            self.logger.info(f"Fetching user '{username}' referenced in role mapping rule...")
+            raw = self._get_all("/security/users", f"user {username}", extra_params={"search": username})
+            known_ids = {u.id for u in security_users}
+            for item in raw:
+                if item.get("username") == username and item.get("id") not in known_ids:
+                    role_ids = item.get("roles") or []
+                    if isinstance(role_ids, list):
+                        role_ids = [int(r) if not isinstance(r, int) else r for r in role_ids]
+                    security_users.append(WazuhSecurityUser(
+                        id=item.get("id", 0),
+                        username=item.get("username", ""),
+                        allow_run_as=bool(item.get("allow_run_as", False)),
+                        roles=role_ids,
+                    ))
+                    self.logger.info(f"Added user '{username}' from role mapping rule.")
 
         self.logger.info("Collecting indexer internal users...")
         indexer_users = self.get_indexer_users(
@@ -963,6 +1032,7 @@ class WazuhCollector:
             security_users=security_users,
             security_roles=security_roles,
             security_policies=security_policies,
+            role_mappings=role_mappings,
             indexer_users=indexer_users,
             indexer_roles=indexer_roles,
             network_segments=network_segments,

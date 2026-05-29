@@ -31,7 +31,7 @@ RETURN p
 
 ## Coverage
 
-WazuhHound defines **12 node kinds** and **19 relationship kinds**.
+WazuhHound defines **13 node kinds** and **21 relationship kinds**.
 
 | Area | Node kinds |
 | --- | --- |
@@ -39,14 +39,14 @@ WazuhHound defines **12 node kinds** and **19 relationship kinds**.
 | Agents | `WZ_Agent`, `WZ_AgentGroup` |
 | Network | `WZ_NetworkSegment` |
 | Indexer | `WZ_IndexerCluster`, `WZ_IndexerNode`, `WZ_IndexerRole` |
-| Security (RBAC) | `WZ_User`, `WZ_Role`, `WZ_Policy` |
+| Security (RBAC) | `WZ_User`, `WZ_Role`, `WZ_Policy`, `WZ_RoleMapping` |
 | Security (Indexer) | `WZ_IndexerUser` |
 
 | Area | Relationship kinds |
 | --- | --- |
 | Agent topology | `WZ_MemberOf`, `WZ_ConnectedTo`, `WZ_InSegment`, `WZ_SharedSegment` |
 | Infrastructure | `WZ_PartOf`, `WZ_ManagedBy`, `WZ_Monitors` |
-| RBAC | `WZ_HasRole`, `WZ_HasPolicy` |
+| RBAC | `WZ_HasRole`, `WZ_HasPolicy`, `WZ_AutoAssigns`, `WZ_AppliesTo` |
 | Indexer access | `WZ_AccessesIndexer`, `WZ_MappedToRole`, `WZ_CanReadIndex`, `WZ_CanWriteIndex` |
 | Attack paths | `WZ_CanControlAgent`, `WZ_CanManageSecurity`, `WZ_CanImpersonate`, `WZ_CanInjectEvents`, `WZ_CanExecuteAR`, `WZ_CanWriteConfig` |
 
@@ -344,7 +344,7 @@ All 17 relationship kinds are marked `is_traversable: true` in `schema.json`, en
 ```
 WZ_MemberOf         WZ_ConnectedTo      WZ_InSegment        WZ_SharedSegment
 WZ_PartOf           WZ_ManagedBy        WZ_Monitors
-WZ_HasRole          WZ_HasPolicy
+WZ_HasRole          WZ_HasPolicy        WZ_AutoAssigns      WZ_AppliesTo
 WZ_AccessesIndexer  WZ_MappedToRole     WZ_CanReadIndex     WZ_CanWriteIndex
 WZ_CanControlAgent  WZ_CanManageSecurity
 WZ_CanImpersonate   WZ_CanInjectEvents  WZ_CanExecuteAR     WZ_CanWriteConfig
@@ -371,7 +371,7 @@ WZ_CanImpersonate   WZ_CanInjectEvents  WZ_CanExecuteAR     WZ_CanWriteConfig
 | | Indexer - Admin Roles | Roles with full access |
 | | Indexer - User Role Mapping | Indexer user → role assignments |
 | | Indexer - User Full Path | Full path from indexer user to cluster |
-| **Network** | Network - All Relationships | Full agent/cluster/indexer graph |
+| **Network** | Network - Full Infrastructure | Full agent/cluster/indexer graph |
 | | Network - Full Infrastructure | All infrastructure edges |
 | | Network - Agent Full Path | Agent → Group → Cluster path |
 | | Network - Infrastructure to Indexer | Cluster → Indexer link |
@@ -384,15 +384,16 @@ WZ_CanImpersonate   WZ_CanInjectEvents  WZ_CanExecuteAR     WZ_CanWriteConfig
 | | Security - Allow Run As | Users with `allow_run_as = true` |
 | | Security - Policies Allow Effect | All allow-effect policies |
 | | Security - Indexer Internal Users | OpenSearch internal users |
+| | Security - Role Mappings | Users matched by automatic role mapping rules |
+| | Security - All Role Mappings | All role mapping rules and their target roles |
 | **Attack** | Attack - Full Chain | User → Role → Policy → impact |
-| | Attack - Full Compromise Path | User to cluster control |
 | | Attack - All Paths | All impact edges |
 | | Attack - Privilege Escalation | Paths to `WZ_CanManageSecurity` |
 | | Attack - Agent Control Paths | Paths to `WZ_CanControlAgent` |
 | | Attack - Event Injection | Paths to `WZ_CanInjectEvents` |
 | | Attack - Active Response Abuse | Paths to `WZ_CanExecuteAR` |
 | | Attack - Impersonation | Users with `WZ_CanImpersonate` |
-| | Attack - Indexer Read Access | Paths to `WZ_CanReadIndex` |
+| | Attack - Indexer All Access | Paths to `WZ_CanReadIndex` or `WZ_CanWriteIndex` |
 | | Attack - Indexer Write Access | Paths to `WZ_CanWriteIndex` |
 | | Attack - RBAC Black Mode | Clusters with default-allow RBAC |
 | | Attack - Critical CVE Agents | Agents with critical vulnerabilities |

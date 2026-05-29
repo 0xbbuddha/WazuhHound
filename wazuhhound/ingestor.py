@@ -6,7 +6,7 @@ from bhopengraph.Node import Node as OGNode
 from bhopengraph.OpenGraph import OpenGraph
 from bhopengraph.Properties import Properties as OGProps
 
-from .models import WazuhEnvironment, WazuhIndexerRole, WazuhIndexerUser, WazuhNetworkSegment
+from .models import WazuhEnvironment, WazuhIndexerRole, WazuhIndexerUser, WazuhNetworkSegment, WazuhRoleMapping
 from .names import wz_kind
 
 BASE = wz_kind("Base")
@@ -31,9 +31,10 @@ class WazuhIngestor:
         self._ingest_agents()
         self._ingest_network_segments()
         self._ingest_security()
-        self._ingest_policy_impact()
         self._ingest_indexer_roles()
         self._ingest_indexer_users()
+        self._ingest_role_mappings()
+        self._ingest_policy_impact()
         return self.og
 
     # ------------------------------------------------------------------
@@ -319,6 +320,77 @@ class WazuhIngestor:
                     )
                 )
                 self.logger.debug(f"Agent {agent.name} -[ConnectedTo]-> {manager_id}")
+
+    # ------------------------------------------------------------------
+    # Role mapping rules (/security/rules)
+    # ------------------------------------------------------------------
+
+    def _ingest_role_mappings(self) -> None:
+        if not self.env.role_mappings:
+            return
+
+        role_by_id = {r.id: r for r in self.env.security_roles}
+        user_by_username = {u.username: u for u in self.env.security_users}
+        # Wazuh role mapping rules can also reference indexer (OpenSearch/Dashboard) users
+        indexer_user_by_username = {u.username: u for u in self.env.indexer_users}
+
+        for mapping in self.env.role_mappings:
+            import json as _json
+            rule_str = _json.dumps(mapping.rule, separators=(",", ":")) if mapping.rule else "{}"
+            self.og.add_node(OGNode(
+                id=mapping.object_id(),
+                kinds=[wz_kind("RoleMapping"), BASE],
+                properties=OGProps(
+                    name=mapping.name,
+                    mappingid=mapping.id,
+                    rule=rule_str,
+                ),
+            ))
+            self.logger.debug(f"RoleMapping {mapping.name}")
+
+            # WZ_RoleMapping -[WZ_AutoAssigns]-> WZ_Role
+            for role_id in mapping.role_ids:
+                if role_id in role_by_id:
+                    self.og.add_edge(OGEdge(
+                        start_node=mapping.object_id(),
+                        end_node=role_by_id[role_id].object_id(),
+                        kind=wz_kind("AutoAssigns"),
+                        properties=OGProps(),
+                    ))
+                    self.logger.debug(f"RoleMapping {mapping.name} -[AutoAssigns]-> {role_by_id[role_id].name}")
+
+            # Try to resolve username-based rules against both Manager API users and Indexer users
+            matched_users = self._evaluate_mapping_rule(mapping.rule, user_by_username)
+            matched_users += self._evaluate_mapping_rule(mapping.rule, indexer_user_by_username)
+            for user_obj_id in list(set(matched_users)):
+                self.og.add_edge(OGEdge(
+                    start_node=user_obj_id,
+                    end_node=mapping.object_id(),
+                    kind=wz_kind("AppliesTo"),
+                    properties=OGProps(),
+                ))
+                self.logger.debug(f"User -[AppliesTo]-> RoleMapping {mapping.name}")
+
+    @staticmethod
+    def _evaluate_mapping_rule(rule: dict, user_by_username: dict) -> list:
+        """Resolve simple FIND/MATCH username rules to user object IDs."""
+        if not isinstance(rule, dict):
+            return []
+        matched = []
+        for op in ("FIND", "MATCH"):
+            condition = rule.get(op)
+            if isinstance(condition, dict):
+                # Wazuh uses both "username" and "user_name" depending on version
+                username = condition.get("username") or condition.get("user_name")
+                if username and username in user_by_username:
+                    matched.append(user_by_username[username].object_id())
+        # AND/OR: recurse one level
+        for op in ("AND", "OR"):
+            sub = rule.get(op)
+            if isinstance(sub, list):
+                for sub_rule in sub:
+                    matched.extend(WazuhIngestor._evaluate_mapping_rule(sub_rule, user_by_username))
+        return list(set(matched))
 
     # ------------------------------------------------------------------
     # Policy impact edges (compromise paths)
